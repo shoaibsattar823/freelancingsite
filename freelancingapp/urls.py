@@ -10,5 +10,4 @@ urlpatterns = [
     url(r'^freelance/$', views.FreelancerView.as_view()),
     url(r'^talents/$', views.TalentsView.as_view()),
     url(r'^talents/([\w ]+)$', views.TalentDetailView.as_view()),
-    # url(r'^joinus/$', views.NewUserView.as_view()),
 ]
