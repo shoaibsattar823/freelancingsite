@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+  <title>Freelancing Website</title>
+  <style>
+    dd {
+      display: block;
+      margin-left: 40px;
+    }
+  </style>
+</head>
+<body>
+  <p>Welcome to Freelancing Site</p>
+
+  <div>
+    {% if not user.username %}
+      <p>
+        <a href="/login/">Login</a>
+        <!--<a href="/signup/">Signup</a> -->
+      </p>
+    {% else %}
+      <a href="/logout/">Logout</a>
+    {% endif %}
+  </div>
+
+  <div>
+    <dl>
+      <dd><a href="/hire/">Hire Top Talent</a></dd>
+      <dd><a href="/freelance">Apply as a Freelancer</a></dd>
+    </dl>
+  </div>
+
+  <div>
+    <h3>Our Top Talents</h3>
+    {% for freelancer in freelancers %}
+      <li>{{ freelancer }}</li>
+    {% endfor %}
+  </div>
+
+  <div>
+    <h3>Clients</h3>
+    {% for company in companies %}
+      <li>{{ company }}</li>
+    {% endfor %}
+  </div>
+</body>
+</html>
