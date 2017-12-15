@@ -16,32 +16,36 @@
     {% if not user.username %}
       <p>
         <a href="/login/">Login</a>
-        <!--<a href="/signup/">Signup</a> -->
+        <dd><a href="/recruitersignup/">Signup as a Recruiter</a></dd>
+        <dd><a href="/freelancesignup">Signup as a Freelancer</a></dd>
       </p>
+      <div>
+        <h3>Our Top Talents</h3>
+        {% for freelancer in freelancers %}
+          <li>{{ freelancer }}</li>
+        {% endfor %}
+      </div>
+
+      <div>
+        <h3>Clients</h3>
+        {% for company in companies %}
+          <li>{{ company }}</li>
+        {% endfor %}
+      </div>
+
     {% else %}
+
       <a href="/logout/">Logout</a>
+      <div>
+        <dl>
+          {% if usertype == 'recruiter' %}
+            <dd><a href="/hire/">Hire Top Talent</a></dd>
+          {% elif usertype == 'freelancer' %}
+            <dd><a href="/freelance/">Search Jobs that match your interests</a></dd>
+          {% endif %}
+        </dl>
+      </div>
     {% endif %}
-  </div>
-
-  <div>
-    <dl>
-      <dd><a href="/hire/">Hire Top Talent</a></dd>
-      <dd><a href="/freelance">Apply as a Freelancer</a></dd>
-    </dl>
-  </div>
-
-  <div>
-    <h3>Our Top Talents</h3>
-    {% for freelancer in freelancers %}
-      <li>{{ freelancer }}</li>
-    {% endfor %}
-  </div>
-
-  <div>
-    <h3>Clients</h3>
-    {% for company in companies %}
-      <li>{{ company }}</li>
-    {% endfor %}
   </div>
 </body>
 </html>

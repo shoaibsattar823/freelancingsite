@@ -13,21 +13,34 @@ CHOICES = (('Developer', 'Developer'),
 
 
 class Freelancer(models.Model):
+    user = models.OneToOneField(User, default='', null=True)
     name = models.CharField(max_length=100)
-    expertise = models.CharField(max_length=100, choices=CHOICES)
-    email = models.EmailField(max_length=70, unique=True)
     username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=70, unique=True)
+    expertise = models.CharField(max_length=100, choices=CHOICES)
     description = models.TextField(null=True, blank=True)
+    is_freelancer = models.BooleanField(default=True)
+    is_recruiter = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
 
+# @receiver(post_save, sender=User)
+# def create_freelancer_profile(sender, **kwargs):
+#     if kwargs['created']:
+#         Freelancer.objects.create()
+
+
 class Recruiter(models.Model):
-    to_hire = models.CharField(max_length=100, choices=CHOICES)
+    user = models.OneToOneField(User, default='', null=True)
     name = models.CharField(max_length=100)
+    username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=70, unique=True)
     company = models.CharField(max_length=100)
+    to_hire = models.CharField(max_length=100, choices=CHOICES, null=True, blank=True)
+    is_freelancer = models.BooleanField(default=False)
+    is_recruiter = models.BooleanField(default=True)
 
     def __str__(self):
         return u'%s_%s' % (self.name, self.company)
