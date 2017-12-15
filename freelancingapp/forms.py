@@ -1,13 +1,19 @@
 from django.forms import ModelForm
+from django import forms
 from .models import *
 
 
 class RecruiterForm(ModelForm):
     class Meta:
         model = Recruiter
-        fields = '__all__'
+        exclude = ['user', 'username', 'is_recruiter', 'is_freelancer']
+
 
 class FreelancerForm(ModelForm):
     class Meta:
         model = Freelancer
-        fields = '__all__'
+        exclude = ['user', 'username', 'is_recruiter', 'is_freelancer']
+
+
+class HireForm(forms.Form):
+    expertise = forms.ChoiceField(choices=CHOICES)
