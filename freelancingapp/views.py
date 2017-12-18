@@ -9,8 +9,8 @@ from django.views import View
 from django.views.generic.list import ListView
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
-from forms import RecruiterForm, FreelancerForm, HireForm
-from .models import Freelancer, Company, Recruiter
+from forms import RecruiterForm, FreelancerForm, HireForm, JobPostForm
+from .models import Freelancer, Company, Recruiter, Job
 
 
 class HomePage(View):
@@ -105,7 +105,10 @@ class FreelancerView(View):
     template_name = 'freelancingapp/freelance.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        freelancer = Freelancer.objects.get(username=request.user)
+        jobs = Job.objects.filter(required_skills=freelancer.expertise)
+        jobs = [job.designation for job in jobs]
+        return render(request, self.template_name, {'jobs': jobs})
 
 
 class HireTalent(View):
@@ -120,6 +123,22 @@ class HireTalent(View):
             expertise = form.cleaned_data['expertise']
             talents = Freelancer.objects.filter(expertise=expertise)
             return render(request, self.template_name, {'talents': talents})
+
+
+class PostJob(View):
+    template_name = 'freelancingapp/post-job.html'
+
+    def get(self, request):
+        form = JobPostForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = JobPostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            data = form.cleaned_data
+            print 'data: ', data
+            return render(request, self.template_name, {'data': data})
 
 
 def logout_view(request):

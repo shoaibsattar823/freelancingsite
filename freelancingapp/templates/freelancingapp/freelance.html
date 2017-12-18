@@ -1,3 +1,6 @@
 <div>
-  <p>Search for Jobs that match you!</p>
+  <p>Jobs that match your skills:</p>
+  {% for job in jobs %}
+  <p><a href="{{ job }}/">{{ job }}</a></p>
+  {% endfor %}
 </div>

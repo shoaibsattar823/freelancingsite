@@ -26,12 +26,6 @@ class Freelancer(models.Model):
         return self.name
 
 
-# @receiver(post_save, sender=User)
-# def create_freelancer_profile(sender, **kwargs):
-#     if kwargs['created']:
-#         Freelancer.objects.create()
-
-
 class Recruiter(models.Model):
     user = models.OneToOneField(User, default='', null=True)
     name = models.CharField(max_length=100)
@@ -44,6 +38,15 @@ class Recruiter(models.Model):
 
     def __str__(self):
         return u'%s_%s' % (self.name, self.company)
+
+
+class Job(models.Model):
+    designation = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    required_skills = models.CharField(max_length=100, choices=CHOICES, null=True)
+
+    def __str__(self):
+        return u'%s' % self.designation
 
 
 class Company(models.Model):

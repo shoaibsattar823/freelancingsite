@@ -17,3 +17,9 @@ class FreelancerForm(ModelForm):
 
 class HireForm(forms.Form):
     expertise = forms.ChoiceField(choices=CHOICES)
+
+
+class JobPostForm(ModelForm):
+    class Meta:
+        model = Job
+        fields = '__all__'
