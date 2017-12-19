@@ -6,6 +6,8 @@
 </form>
 {% else %}
 <div>
-  {{ talents }}
+  {% for talent in talents %}
+    <a href="{{talent.username}}/">{{ talent.name }}</a>
+  {% endfor %}
 </div>
 {% endif %}

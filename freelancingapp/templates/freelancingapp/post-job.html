@@ -2,7 +2,9 @@
   {% if request.method == 'GET' %}
     <form method='post' action="">
       {% csrf_token %}
-      {{ form.as_p }}
+      <p>Name of the Project: {{ form.designation }}</p>
+      <p>Describe more about the project: {{ form.description }}</p>
+      <p>Skills Required: {{ form.required_skills }}</p>
       <input type="submit" value="Post My Job"/>
     </form>
     {% else %}
