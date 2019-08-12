@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^recruiter/$', views.RecruiterHome.as_view()),
     url(r'^hire/$', views.HireTalent.as_view()),
     url(r'^freelance/$', views.FreelancerView.as_view()),
+    url(r'^job-posting/$', views.PostJob.as_view()),
 ]

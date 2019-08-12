@@ -6,44 +6,39 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render
 from django.views import View
-from django.views.generic.list import ListView
+from django.views.generic.base import TemplateView
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponse
-from forms import RecruiterForm, FreelancerForm, HireForm
-from .models import Freelancer, Company, Recruiter
+from forms import RecruiterForm, FreelancerForm, HireForm, JobPostForm
+from .models import Freelancer, Company, Recruiter, Job
 
 
 class HomePage(View):
     template_name = 'freelancingapp/home.html'
-
     freelancers = Freelancer.objects.all()
     companies = Company.objects.all()
+
     def get(self, request):
-        if (Freelancer.objects.filter(username=request.user)).exists():
+        if Freelancer.objects.filter(username=request.user).exists():
             usertype = 'freelancer'
-            return render(request, self.template_name,
-                          {'freelancers': self.freelancers,
-                           'companies': self.companies,
-                           'usertype': usertype
-                           })
         else:
             usertype = 'recruiter'
-            return render(request, self.template_name,
-                          {'freelancers': self.freelancers,
-                           'companies': self.companies,
-                           'usertype': usertype
-                           })
+
+        context = {'freelancers': self.freelancers,
+                   'companies': self.companies,
+                   'usertype': usertype}
+
+        return render(request, self.template_name, context)
 
 
-class RecruiterSignUp(View):
+class RecruiterSignUp(TemplateView):
     template_name = 'freelancingapp/recruitersignup.html'
 
-    def get(self, request):
-        recruiter_form = RecruiterForm()
-        user_form = UserCreationForm()
-        return render(request, self.template_name,
-                      {'recruiter_form': recruiter_form,
-                       'user_form': user_form})
+    def get_context_data(self, **kwargs):
+        context = super(RecruiterSignUp, self).get_context_data(**kwargs)
+        context['recruiter_form'] = RecruiterForm()
+        context['user_form'] = UserCreationForm()
+        return context
 
 
 class RecruiterHome(View):
@@ -56,20 +51,16 @@ class RecruiterHome(View):
     def post(self, request):
         recruiter_form = RecruiterForm(request.POST)
         user_form = UserCreationForm(request.POST)
+
         if recruiter_form.is_valid() and user_form.is_valid():
             user = user_form.save()
-            rec_data = recruiter_form.cleaned_data
-            name = rec_data['name']
             username = user_form.cleaned_data['username']
-            email = rec_data['email']
-            company = rec_data['company']
-            to_hire = rec_data['to_hire']
-            Recruiter.objects.create(user=user, name=name, username=username,
-                                     email=email, company=company)
-            raw_password = user_form.cleaned_data.get('password1')
-            talents = Freelancer.objects.filter(expertise=expertise)
+            recruiter = recruiter_form.save(commit=False)
+            recruiter.user = user
+            recruiter.username = username
+            recruiter.save()
             login(request, user)
-            return HttpResponseRedirect('/hire/')
+            return HttpResponseRedirect('/')
         else:
             return HttpResponseRedirect('/recruitersignup/')
 
@@ -89,14 +80,11 @@ class FreelancerSignUp(View):
         freelancer_form = FreelancerForm(request.POST)
         if user_form.is_valid() and freelancer_form.is_valid():
             user = user_form.save()
-            name = freelancer_form.cleaned_data['name']
-            expertise = freelancer_form.cleaned_data['expertise']
-            email = freelancer_form.cleaned_data['email']
             username = user_form.cleaned_data['username']
-            desc = freelancer_form.cleaned_data['description']
-            Freelancer.objects.create(user=user, name=name, expertise=expertise,
-                                      email=email, username=username,
-                                      description=desc)
+            freelancer = freelancer_form.save(commit=False)
+            freelancer.user = user
+            freelancer.username = username
+            freelancer.save()
             login(request, user)
             return HttpResponseRedirect('/freelance/')
 
@@ -105,7 +93,10 @@ class FreelancerView(View):
     template_name = 'freelancingapp/freelance.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        freelancer = Freelancer.objects.get(username=request.user)
+        jobs = Job.objects.filter(required_skills=freelancer.expertise)
+        jobs = [job.designation for job in jobs]
+        return render(request, self.template_name, {'jobs': jobs})
 
 
 class HireTalent(View):
@@ -120,6 +111,21 @@ class HireTalent(View):
             expertise = form.cleaned_data['expertise']
             talents = Freelancer.objects.filter(expertise=expertise)
             return render(request, self.template_name, {'talents': talents})
+
+
+class PostJob(View):
+    template_name = 'freelancingapp/post-job.html'
+
+    def get(self, request):
+        form = JobPostForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = JobPostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            data = form.cleaned_data
+            return render(request, self.template_name, {'data': data})
 
 
 def logout_view(request):

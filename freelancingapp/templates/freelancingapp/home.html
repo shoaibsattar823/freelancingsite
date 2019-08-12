@@ -36,10 +36,12 @@
     {% else %}
 
       <a href="/logout/">Logout</a>
+      <p>{{ usertype }}</p>
       <div>
         <dl>
           {% if usertype == 'recruiter' %}
             <dd><a href="/hire/">Hire Top Talent</a></dd>
+            <dd><a href="/job-posting/">Post a Job</a></dd>
           {% elif usertype == 'freelancer' %}
             <dd><a href="/freelance/">Search Jobs that match your interests</a></dd>
           {% endif %}

@@ -6,7 +6,7 @@ from .models import *
 class RecruiterForm(ModelForm):
     class Meta:
         model = Recruiter
-        exclude = ['user', 'username', 'is_recruiter', 'is_freelancer']
+        exclude = ['user', 'username', 'is_recruiter', 'is_freelancer', 'to_hire']
 
 
 class FreelancerForm(ModelForm):
@@ -17,3 +17,9 @@ class FreelancerForm(ModelForm):
 
 class HireForm(forms.Form):
     expertise = forms.ChoiceField(choices=CHOICES)
+
+
+class JobPostForm(ModelForm):
+    class Meta:
+        model = Job
+        fields = '__all__'
